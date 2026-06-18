@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>S.F.H., s.r.o. – Nové Zámky</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080402;color:#f5f0e8;font-family:'Barlow',sans-serif;overflow-x:hidden}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,6vw,5rem);line-height:1.1}
+h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,4vw,3rem);line-height:1.2}
+h3{font-size:clamp(1.1rem,3vw,1.8rem);font-family:'Cormorant Garamond',serif}
+p{font-size:clamp(0.95rem,2vw,1.1rem);line-height:1.7}
+.scene{padding:clamp(20px,5vw,80px)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.btn{display:inline-block;padding:clamp(12px,2vw,18px) clamp(20px,4vw,44px);border-radius:50px}
+canvas{width:100%;height:100%}
+@media(max-width:768px){.nav-dots{display:none}.mascot{width:48px!important;bottom:16px!important;left:auto!important;right:16px!important}.btn{width:100%;display:block;text-align:center;margin:8px 0}.contact-grid{flex-direction:column}.scene-content{padding:16px}}
+@media(max-width:480px){.cards{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#7C3AED,#7C3AEDcc);z-index:100;width:0%}
+.nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:12px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(200,200,200,0.2);cursor:pointer;transition:all 0.3s;border:1px solid #7C3AED55}
+.nav-dot.active{background:#7C3AED;transform:scale(1.3)}
+.mascot{position:fixed;bottom:50px;left:50px;width:80px;z-index:100;cursor:pointer}
+.speech-bubble{position:fixed;bottom:140px;left:20px;background:rgba(5,5,5,0.95);border:1px solid #7C3AED;border-radius:12px;padding:10px 14px;font-size:0.78rem;color:#7C3AED;z-index:100;max-width:180px;display:none}
+.speech-bubble::after{content:'';position:absolute;bottom:-8px;left:30px;border:4px solid transparent;border-top-color:#7C3AED}
+.section-wrap{position:relative;height:500vh}
+.sticky-inner{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.scene-content{position:relative;z-index:10;max-width:900px;width:100%;padding:clamp(20px,5vw,80px);opacity:0;transform:translateY(30px);transition:opacity 0.9s ease,transform 0.9s ease}
+.scene-content.active{opacity:1;transform:translateY(0)}
+nav{position:fixed;top:0;left:0;right:0;z-index:99;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;transition:background 0.3s}
+nav.scrolled{background:rgba(5,5,5,0.95);backdrop-filter:blur(10px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:#7C3AED}
+.accent{color:#7C3AED}.divider{width:60px;height:2px;background:#7C3AED;margin:16px 0}
+.badge{display:inline-block;background:#7C3AED22;border:1px solid #7C3AED55;color:#7C3AED;padding:6px 16px;border-radius:20px;font-size:0.85rem;margin-bottom:16px}
+.card{background:rgba(255,255,255,0.04);border:1px solid #7C3AED22;border-radius:16px;padding:24px;transition:all 0.3s}
+.card:hover{background:#7C3AED11;border-color:#7C3AED66;transform:translateY(-4px)}
+.card-icon{font-size:2rem;margin-bottom:12px}
+.stat-box{background:#7C3AED11;border:1px solid #7C3AED33;border-radius:12px;padding:20px;text-align:center}
+.stat-number{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:#7C3AED}
+.stat-label{font-size:0.82rem;color:rgba(245,240,232,0.6);margin-top:4px}
+.quote-block{border-left:3px solid #7C3AED;padding-left:24px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.2rem,2.5vw,1.6rem);color:rgba(245,240,232,0.9);margin:24px 0}
+.contact-grid{display:flex;gap:24px;flex-wrap:wrap}
+.contact-item{display:flex;align-items:flex-start;gap:12px;flex:1;min-width:200px}
+.contact-icon{font-size:1.4rem;margin-top:2px}.contact-label{font-size:0.8rem;color:rgba(245,240,232,0.5);margin-bottom:2px}.contact-val{font-size:0.95rem;color:#f5f0e8}
+.btn-primary{background:linear-gradient(135deg,#7C3AED,#7C3AEDcc);color:#080401;font-weight:600;text-decoration:none}
+.btn-outline{background:transparent;border:2px solid #7C3AED;color:#7C3AED;text-decoration:none}
+.btn-wrap{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.counter{display:inline-block}</style></head>
+<body>
+<div id="progress"></div><canvas id="bg"></canvas>
+<nav id="navbar"><div class="nav-logo">S.F.H., s.r.o.</div></nav>
+<div class="nav-dots"><div class="nav-dot active" onclick="scrollToScene(0)"></div><div class="nav-dot" onclick="scrollToScene(1)"></div><div class="nav-dot" onclick="scrollToScene(2)"></div><div class="nav-dot" onclick="scrollToScene(3)"></div><div class="nav-dot" onclick="scrollToScene(4)"></div></div>
+<svg class="mascot" id="mascot" viewBox="0 0 100 130"><ellipse cx="50" cy="26" rx="30" ry="20" fill="#7C3AED"/><rect x="22" y="34" width="56" height="7" rx="3" fill="#7C3AED" opacity="0.8"/><ellipse cx="50" cy="57" rx="26" ry="24" fill="#FDBCB4"/><ellipse cx="38" cy="52" rx="5" ry="5.5" fill="#fff"/><ellipse cx="62" cy="52" rx="5" ry="5.5" fill="#fff"/><circle cx="39" cy="53" r="3" fill="#3d2000"/><circle cx="63" cy="53" r="3" fill="#3d2000"/><path d="M42,68 Q50,76 58,68" stroke="#c0725c" stroke-width="2" fill="none"/><path d="M20,78 L20,126 L80,126 L80,78 Q50,70 20,78Z" fill="#4a6fa5"/><rect x="18" y="100" width="64" height="10" rx="3" fill="#8B6914"/><line x1="78" y1="85" x2="94" y2="65" stroke="#888" stroke-width="4" stroke-linecap="round"/><rect x="90" y="60" width="10" height="6" rx="2" fill="#999"/></svg>
+<div class="speech-bubble" id="speechBubble">Vitajte!</div>
+<div class="section-wrap" id="scene0wrap"><div class="sticky-inner"><div class="scene-content" id="scene0">
+<div class="badge">🏢 Stavebná firma · Nové Zámky</div>
+<h1><span class="accent">S.F.H., s.r.o.</span></h1><div class="divider"></div>
+<p style="max-width:520px;color:rgba(245,240,232,0.8)">S.F.H. Nové Zámky — stavebná firma s 30-ročnou tradíciou, realizácia stavieb a rekonštrukcie.</p>
+<div class="btn-wrap"><a href="tel:0356428065" class="btn btn-primary">📞 Kontaktujte nás</a><a href="mailto:firmasfh@sfh.sk" class="btn btn-outline">✉️ Napíšte nám</a></div>
+</div></div></div>
+<div class="section-wrap" id="scene1wrap"><div class="sticky-inner"><div class="scene-content" id="scene1"><h2>Naše <span class="accent">Služby</span></h2><div class="divider"></div><div class="cards" style="margin-top:24px"><div class="card"><div class="card-icon">🏠</div><h3>Realizácia stavieb</h3><p style="color:rgba(245,240,232,0.75)">Profesionálna realizácia s dôrazom na kvalitu.</p><p style="color:#7C3AED;margin-top:8px;font-weight:600">Konzultácia zdarma</p></div><div class="card"><div class="card-icon">💡</div><h3>Stavebný dozor</h3><p style="color:rgba(245,240,232,0.75)">Odborný prístup a spoľahlivé výsledky pre každého klienta.</p><p style="color:#7C3AED;margin-top:8px;font-weight:600">Rekonštrukcia dohodou</p></div><div class="card"><div class="card-icon">🔧</div><h3>Rekonštrukcie domov a bytov</h3><p style="color:rgba(245,240,232,0.75)">Moderné technológie a certifikovaní odborníci.</p><p style="color:#7C3AED;margin-top:8px;font-weight:600">Novostavba dohodou</p></div><div class="card"><div class="card-icon">⭐</div><h3>Stavby na kľúč</h3><p style="color:rgba(245,240,232,0.75)">Kompletný servis s garanciou spokojnosti klienta.</p><p style="color:#7C3AED;margin-top:8px;font-weight:600">Stavebný dozor dohodou</p></div></div></div></div></div>
+<div class="section-wrap" id="scene2wrap"><div class="sticky-inner"><div class="scene-content" id="scene2"><h2>Náš <span class="accent">Príbeh</span></h2><div class="divider"></div><p style="color:rgba(245,240,232,0.8);margin-bottom:16px">S.F.H., s.r.o. vznikla v roku 1992 a realizuje stavby a rekonštrukcie v Nových Zámkoch s plnou zárukou.</p><p style="color:rgba(245,240,232,0.8);margin-bottom:24px">Naším cieľom je spokojnosť každého klienta — pracujeme s odbornosťou a osobným prístupom.</p><div class="stats" style="margin-top:24px"><div class="stat-box"><div class="stat-number counter" data-target="1992">1992</div><div class="stat-label">Rok vzniku</div></div><div class="stat-box"><div class="stat-number counter" data-target="10">10</div><div class="stat-label">Zamestnancov</div></div><div class="stat-box"><div class="stat-number counter" data-target="200">200</div><div class="stat-label">Projektov</div></div><div class="stat-box"><div class="stat-number counter" data-target="30">30</div><div class="stat-label">Rokov tradície</div></div></div></div></div></div>
+<div class="section-wrap" id="scene3wrap"><div class="sticky-inner"><div class="scene-content" id="scene3">
+<div class="quote-block">"Stavby s tradíciou a zárukou od roku 1992 — S.F.H. Nové Zámky."</div>
+<p style="color:rgba(245,240,232,0.75);max-width:580px">Naším cieľom je spokojnosť každého klienta. Pracujeme s odbornosťou, precíznosťou a osobným prístupom — pretože každý projekt je pre nás jedinečný.</p>
+</div></div></div>
+<div class="section-wrap" id="scene4wrap"><div class="sticky-inner"><div class="scene-content" id="scene4">
+<h2><span class="accent">Kontakt</span></h2><div class="divider"></div>
+<div class="contact-grid" style="margin-top:24px">
+<div class="contact-item"><span class="contact-icon">📍</span><div><div class="contact-label">Adresa</div><div class="contact-val">Gúgska ulica 13B, 940 01 Nové Zámky</div></div></div>
+<div class="contact-item"><span class="contact-icon">📞</span><div><div class="contact-label">Telefón</div><div class="contact-val">0356428065</div></div></div>
+<div class="contact-item"><span class="contact-icon">✉️</span><div><div class="contact-label">Email</div><div class="contact-val">firmasfh@sfh.sk</div></div></div>
+<div class="contact-item"><span class="contact-icon">🕐</span><div><div class="contact-label">Otváracie hodiny</div><div class="contact-val">Po-Pi 8:00 - 17:00</div></div></div>
+</div>
+<div class="btn-wrap" style="margin-top:32px">
+<a href="https://wa.me/0356428065" class="btn btn-primary">💬 WhatsApp</a>
+<a href="tel:0356428065" class="btn btn-outline">📞 Zavolať</a>
+</div></div></div></div>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const canvas=document.getElementById('bg');const ctx=canvas.getContext('2d');
+let W,H,scrollProgress=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}resize();
+window.addEventListener('resize',resize);
+
+let aT=0,lT=0,sTimer=0;
+const sparks=[];for(let i=0;i<40;i++)sparks.push({x:0,y:0,vx:0,vy:0,lf:0,ml:40,act:false});
+function draw(ts){const dt=Math.min(ts-lT,32);lT=ts;aT+=dt*0.001;
+ctx.fillStyle='#080402';ctx.fillRect(0,0,W,H);
+ctx.save();ctx.globalAlpha=0.06;ctx.strokeStyle='#FF8C00';ctx.lineWidth=0.5;for(let x=0;x<=W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<=H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}ctx.restore();
+for(let g=0;g<2;g++){const gx=g===0?100:W-100,gy=H*0.5,gr=40,rot=aT*(g===0?1:-1);ctx.save();ctx.globalAlpha=0.1;ctx.strokeStyle='#FF8C00';ctx.lineWidth=2.5;ctx.translate(gx,gy);ctx.rotate(rot);ctx.beginPath();ctx.arc(0,0,gr,0,Math.PI*2);ctx.stroke();for(let t=0;t<8;t++){const a=t*Math.PI/4;ctx.beginPath();ctx.moveTo(Math.cos(a)*gr,Math.sin(a)*gr);ctx.lineTo(Math.cos(a)*(gr+15),Math.sin(a)*(gr+15));ctx.stroke();}ctx.restore();}
+sTimer+=dt;if(sTimer>2000){sTimer=0;sparks.forEach(s=>{s.x=W*0.5+(Math.random()-0.5)*80;s.y=H*0.4;s.vx=(Math.random()-0.5)*4;s.vy=-(Math.random()*3+1);s.lf=0;s.ml=Math.random()*40+20;s.act=true;});}
+sparks.forEach(s=>{if(!s.act)return;s.lf++;s.x+=s.vx;s.y+=s.vy+s.lf*0.08;if(s.lf>s.ml)s.act=false;ctx.globalAlpha=(1-s.lf/s.ml)*0.8;ctx.fillStyle='hsl('+(30+s.lf*2)+',100%,60%)';ctx.beginPath();ctx.arc(s.x,s.y,2,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
+for(let i=0;i<241;i++){ctx.globalAlpha=0.15;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc((i*137+aT*5)%W,(i*89)%H,0.8,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+requestAnimationFrame(draw);}
+requestAnimationFrame(draw);
+window.addEventListener('scroll',()=>{const max=document.body.scrollHeight-window.innerHeight;scrollProgress=window.scrollY/max;document.getElementById('progress').style.width=(scrollProgress*100)+'%';document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60);});
+const sceneIds=['scene0','scene1','scene2','scene3','scene4'];
+const speechTexts=['Vitajte — sme tu pre vás!','Pozrite naše možnosti!','Zistite viac o nás!','Kvalita na prvom mieste!','Kontaktujte nás dnes!'];
+let currentScene=-1;
+function setScene(i){if(currentScene===i)return;if(currentScene>=0)document.getElementById(sceneIds[currentScene]).classList.remove('active');currentScene=i;document.getElementById(sceneIds[i]).classList.add('active');document.querySelectorAll('.nav-dot').forEach((d,j)=>d.classList.toggle('active',j===i));const sb=document.getElementById('speechBubble');sb.textContent=speechTexts[i];sb.style.display='block';clearTimeout(sb._t);sb._t=setTimeout(()=>sb.style.display='none',3000);gsap.to('#mascot',{rotation:20,duration:0.2,yoyo:true,repeat:1});document.querySelectorAll('#'+sceneIds[i]+' .counter').forEach(el=>{const target=parseInt(el.dataset.target)||0;let cur=0;const step=()=>{cur+=Math.ceil((target||1)/60);if(cur>=target){el.textContent=target;return}el.textContent=cur;requestAnimationFrame(step)};step();});}
+sceneIds.forEach((id,i)=>{ScrollTrigger.create({trigger:'#'+id+'wrap',start:'top 60%',onEnter:()=>setScene(i),onEnterBack:()=>setScene(i)});});
+gsap.to('#mascot',{y:-12,duration:0.9,ease:'sine.inOut',yoyo:true,repeat:-1});
+document.getElementById('mascot').addEventListener('click',()=>{const msgs=['Dobrý deň! 👋','Tu sme pre vás! 💼','Volajte nás! 📞','Kvalita! ⭐'];const sb=document.getElementById('speechBubble');sb.textContent=msgs[Math.floor(Math.random()*msgs.length)];sb.style.display='block';gsap.to('#mascot',{rotation:360,duration:0.6,ease:'power2.out',onComplete:()=>gsap.set('#mascot',{rotation:0})});clearTimeout(sb._t);sb._t=setTimeout(()=>sb.style.display='none',3000);});
+function scrollToScene(i){window.scrollTo({top:document.getElementById('scene'+i+'wrap').offsetTop,behavior:'smooth'})}
+document.addEventListener('DOMContentLoaded',()=>setScene(0));setScene(0);
+</script></body></html>
